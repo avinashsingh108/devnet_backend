@@ -26,7 +26,17 @@ authRouter.post(
       user.skills = JSON.parse(skills);
       await isEmailAlreadyUsed(req.body.email);
       await user.save();
-      res.send("Data send successfully");
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_HASH_KEY, {
+        expiresIn: "1d",
+      });
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000), 
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      res.json({ message: "Signup successful", token, user });
     } catch (error) {
       res.status(400).send("Something went wrong, " + error);
     }
@@ -46,7 +56,10 @@ authRouter.post("/login", async (req, res) => {
         expiresIn: "1d",
       });
       res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
+        expires: new Date(Date.now() + 8 * 3600000), 
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
       });
       res.json({ message: "Login successfull", data: user });
     } else {
@@ -59,9 +72,9 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === "production",  
-    sameSite: "strict",  
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
   });
 
   res.status(200).json({ message: "Logged out successfully" });
