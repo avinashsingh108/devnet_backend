@@ -18,6 +18,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
       "skills",
       "gender",
       "dob",
+      "location",
     ]);
     res.json({
       message: "Data fetched successfully",
@@ -44,6 +45,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         "profilePic",
         "bio",
         "skills",
+        "gender",
+        "location",
+        "dob"
       ])
       .populate("toUserId", [
         "firstName",
@@ -51,6 +55,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         "profilePic",
         "bio",
         "skills",
+        "gender",
+        "location",
+        "dob"
       ]);
 
     const data = connectionRequests.map((row) => {
@@ -104,7 +111,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
 userRouter.post("/user/profile", userAuth, async (req, res) => {
   try {
     const _id = req.body.userId;
-    
+
     const user = await User.findById(_id);
     if (!user) {
       throw new Error("User not found");
