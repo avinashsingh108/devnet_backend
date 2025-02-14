@@ -6,6 +6,7 @@ const validateUpdatePassword = require("../utils/validateUpdatePassword");
 const bcrypt = require("bcrypt");
 const { upload, uploadImage } = require("../middlewares/fileUpload");
 const User = require("../models/user");
+const ConnectionRequest = require("../models/connectionRequest");
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
@@ -62,12 +63,15 @@ profileRouter.delete("/profile", userAuth, async (req, res) => {
   try {
     const userId = req.user._id;
 
+    await ConnectionRequest.deleteMany({
+      $or: [{ fromUserId: userId }, { toUserId: userId }],
+    });
+
     const deletedUser = await User.findByIdAndDelete(userId);
 
     if (!deletedUser) {
       return res.status(404).json({ error: "User not found." });
     }
-    
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
