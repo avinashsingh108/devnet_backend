@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = initializeSocket(server);
 app.use(
   cors({
-    origin: "https://devnet-blush.vercel.app",
+    origin: ["https://devnet-blush.vercel.app", "http://localhost:5173"],
     credentials: true,
   })
 );

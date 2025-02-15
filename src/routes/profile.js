@@ -10,6 +10,10 @@ const ConnectionRequest = require("../models/connectionRequest");
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
+    res.set("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+
     const user = req.user;
     res.send(user);
   } catch (error) {
@@ -75,14 +79,15 @@ profileRouter.delete("/profile", userAuth, async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: "None",
     });
 
     res.status(200).json({ message: "Account deleted successfully." });
-
   } catch (error) {
     console.error("Error deleting user:", error);
-    res.status(500).json({ error: "An error occurred while deleting the account." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the account." });
   }
 });
 
