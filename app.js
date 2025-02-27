@@ -25,6 +25,10 @@ const userRouter = require("./src/routes/user");
 const skillsRouter = require("./src/routes/skills");
 const chatRouter = require("./src/routes/chat");
 
+app.get("/ping", (req, res) => {
+  res.status(200).send("Server is active");
+});
+
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
